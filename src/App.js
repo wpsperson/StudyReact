@@ -9,7 +9,7 @@ import { filter } from 'minimatch';
 const welcome = {greet:'Hay', word:'React'}
 
 function App() {
-  const list = [
+  const stories = [
     {
     title: 'React',
     url: 'https://reactjs.org/',
@@ -36,7 +36,7 @@ return (
     <h3>{welcome.greet}, {welcome.word}</h3>
     <label htmlFor="search">Search: </label>
     <input id="search" type="text" onChange = {searchTextChange} />
-    <List list={list}/>
+    <List list={stories}/>
   </div>
 );
 }
