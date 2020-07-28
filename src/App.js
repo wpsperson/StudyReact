@@ -38,8 +38,7 @@ return (
 );
 }
 
-const List = (props)=>{
-return  props.list.map( (item)=>
+const List = (props)=> props.list.map( (item)=>
 ( 
    <div key={item.objectID} >
       <span>
@@ -51,8 +50,6 @@ return  props.list.map( (item)=>
     </div>
 )
 )  
-
-}
 
 
 export default App;
