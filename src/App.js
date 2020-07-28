@@ -10,7 +10,7 @@ const welcome = {greet:'Hay', word:'React'}
 
 function App() {
 
-
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   const stories = [
     {
@@ -32,15 +32,16 @@ function App() {
     ];
 
     const AppOnSearch = (event)=>{
-      console.log(event.target.value);
+      setSearchTerm(event.target.value);
     }
 
+    const filtedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <Search onSearch={AppOnSearch}/>
-    <List list={stories}/>
+    <Search onSearch={AppOnSearch} searchWord={searchTerm}/>
+    <List list={filtedStories}/>
   </div>
 );
 }
@@ -59,17 +60,10 @@ const List = (props)=> props.list.map( (item)=>
 )  
 
 const Search = props =>{
-  const [searchTerm, setSearchTerm] = React.useState('');
-
-  const searchTextChange = (event)=>{
-    setSearchTerm(event.target.value);
-    props.onSearch(event);
-  }
-
   return (<div>
   <label htmlFor="search">Search: </label>
-  <input id="search" type="text" onChange = {searchTextChange} />
-  <p> your search word is: <strong>{searchTerm}</strong> </p>
+  <input id="search" type="text" onChange = {props.onSearch} />
+  <p> your search word is: <strong>{props.searchWord}</strong> </p>
   </div>)
 }
 
