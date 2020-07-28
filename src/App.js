@@ -31,22 +31,25 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    {
-      list.map( (item)=>
-      ( 
-         <div key={item.objectID} >
-            <span>
-            <a href={item.url}>{item.title}</a>
-            </span>
-            <span>{item.author}</span>
-            <span>{item.num_comments}</span>
-            <span>{item.points}</span>
-          </div>
-      )
-      )           
-      }
+    <List list={list}/>
   </div>
 );
+}
+
+function List(props){
+return  props.list.map( (item)=>
+( 
+   <div key={item.objectID} >
+      <span>
+      <a href={item.url}>{item.title}</a>
+      </span>
+      <span>{item.author}</span>
+      <span>{item.num_comments}</span>
+      <span>{item.points}</span>
+    </div>
+)
+)  
+
 }
 
 
