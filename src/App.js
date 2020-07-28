@@ -9,6 +9,9 @@ import { filter } from 'minimatch';
 const welcome = {greet:'Hay', word:'React'}
 
 function App() {
+
+  const [searchTerm, setSearchTerm] = React.useState('');
+
   const stories = [
     {
     title: 'React',
@@ -29,6 +32,7 @@ function App() {
     ];
 const searchTextChange = (event)=>{
   console.log(event.target.value);
+  setSearchTerm(event.target.value);
 }
 
 return (
@@ -36,6 +40,7 @@ return (
     <h3>{welcome.greet}, {welcome.word}</h3>
     <label htmlFor="search">Search: </label>
     <input id="search" type="text" onChange = {searchTextChange} />
+    <p> your search word is: <strong>{searchTerm}</strong> </p>
     <List list={stories}/>
   </div>
 );
