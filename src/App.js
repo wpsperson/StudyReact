@@ -38,7 +38,7 @@ return (
 );
 }
 
-function List(props){
+const List = (props)=>{
 return  props.list.map( (item)=>
 ( 
    <div key={item.objectID} >
