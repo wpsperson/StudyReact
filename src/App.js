@@ -31,6 +31,8 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text" />
     <List list={list}/>
   </div>
 );
