@@ -27,12 +27,15 @@ function App() {
     objectID: 1,
     },
     ];
+const searchTextChange = (event)=>{
+  console.log(event.target.value);
+}
 
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text" />
+    <input id="search" type="text" onChange = {searchTextChange} />
     <List list={list}/>
   </div>
 );
