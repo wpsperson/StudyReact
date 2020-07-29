@@ -14,7 +14,7 @@ function App() {
     localStorage.getItem('search') ||  'React'
     );
 
-  const stories = [
+  const initialStories = [
     {
     title: 'React',
     url: 'https://reactjs.org/',
@@ -32,6 +32,12 @@ function App() {
     objectID: 1,
     },
     ];
+    const [stories, setStories] = React.useState(initialStories);
+    
+    const handleRemoveStory = (item)=>{
+      const newStories = stories.filter( (story) =>story.objectID !== item.objectID );
+      setStories(newStories);
+    }
 
 
     const handleSearch = (event)=>{
@@ -42,7 +48,7 @@ function App() {
       localStorage.setItem('search', searchTerm);
     }, [searchTerm] )
 
-    const filtedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
+    const searchedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
 return (
   <div>
@@ -50,25 +56,37 @@ return (
     <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
-    <List list={filtedStories}/>
+    <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
   </div>
 );
 }
 
-const List = ({list})=> list.map( 
-  ({objectID, ...item})=> <Item key={objectID} {...item}/>
+const List = ({list, onRemoveItem})=> list.map( 
+  (item)=> <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem}/>
 )
 
-const Item = ({url, title, author, num_comments, points})=>(
-  <div>
-  <span>
-  <a href={url}>{title}</a>
-  </span>
-  <span>{author}</span>
-  <span>{num_comments}</span>
-  <span>{points}</span>
-  </div>
-)
+const Item = ({item, onRemoveItem})=>{
+
+  const handleRemoveItem = () => {
+    onRemoveItem(item);
+    };
+
+  return (
+    <div>
+    <span>
+    <a href={item.url}>{item.title}</a>
+    </span>
+    <span>{item.author}</span>
+    <span>{item.num_comments}</span>
+    <span>{item.points}</span>
+    <span>
+      <button type="button" onClick={handleRemoveItem}>
+        Dismiss
+      </button>
+    </span>
+    </div>
+  )
+}
 
 const InputWithLabel = ({id, value, isFocused,  onChange, children}) => {
 
