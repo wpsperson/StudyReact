@@ -32,8 +32,15 @@ function App() {
     objectID: 1,
     },
     ];
-    const [stories, setStories] = React.useState(initialStories);
+
+    //初始为空
+    const [stories, setStories] = React.useState([]);
     
+    const getAsyncStories = () =>
+      new Promise(resolve => setTimeout( ()=>resolve({ data: { stories: initialStories } }), 2000 )      
+    );
+
+
     const handleRemoveStory = (item)=>{
       const newStories = stories.filter( (story) =>story.objectID !== item.objectID );
       setStories(newStories);
@@ -47,6 +54,12 @@ function App() {
     React.useEffect( ()=>{
       localStorage.setItem('search', searchTerm);
     }, [searchTerm] )
+
+    React.useEffect( ()=>{
+      getAsyncStories().then( (result)=>{
+        setStories(result.data.stories);
+      } )
+    }, [] );
 
     const searchedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
@@ -74,6 +87,7 @@ const Item = ({item, onRemoveItem})=>(
   <span>{item.num_comments}</span>
   <span>{item.points}</span>
   <span>
+    //onClick={onRemoveItem.bind(null, item)}
     <button type="button" onClick={ ()=>onRemoveItem(item) }>
       Dismiss
     </button>
