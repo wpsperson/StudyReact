@@ -33,8 +33,12 @@ function App() {
     },
     ];
 
-    //初始为空
+    //stories 列表，初始为空
     const [stories, setStories] = React.useState([]);
+    //加载完成标记，默认否
+    const [isLoading, setIsLoading] = React.useState(false);
+    //加载过程是否出错
+    const [isError, setIsError] = React.useState(false);
     
     const getAsyncStories = () =>
       new Promise(resolve => setTimeout( ()=>resolve({ data: { stories: initialStories } }), 2000 )      
@@ -56,9 +60,13 @@ function App() {
     }, [searchTerm] )
 
     React.useEffect( ()=>{
+      setIsLoading(true);
       getAsyncStories().then( (result)=>{
         setStories(result.data.stories);
-      } )
+        setIsLoading(false);
+      } ).catch(
+        (errInfo)=>setIsError(true)
+      )
     }, [] );
 
     const searchedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
@@ -69,7 +77,11 @@ return (
     <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
-    <List list={searchedStories} onRemoveItem={handleRemoveStory}/>
+    {isError && (<p>sorry, there is error!</p>)}
+    {isLoading?
+    (<p> loading...</p>)
+    :(<List list={searchedStories} onRemoveItem={handleRemoveStory}/>)}
+    
   </div>
 );
 }
