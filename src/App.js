@@ -47,7 +47,7 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <InputWithLabel id='search' value={searchTerm} onChange={handleSearch}>
+    <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
     <List list={filtedStories}/>
@@ -69,11 +69,11 @@ const List = (props)=> props.list.map( (item)=>
 )  
 
 
-const InputWithLabel = ({id, value,  onChange, children}) => {
+const InputWithLabel = ({id, value, isFocused,  onChange, children}) => {
 return  (
   <>
   <label htmlFor={id}>{children}</label>
-  <input id={id} type='text' value ={value}  onChange = {onChange} />
+  <input id={id} type='text' value ={value} autoFocus = {isFocused}  onChange = {onChange} />
   <p> your search word is: <strong>{value}</strong> </p>
   </>)
 
