@@ -36,11 +36,32 @@ function App() {
     const storiesReducer = (state, action)=>{
 
       switch (action.type) {
-        case 'SET_STORIES':
-          return action.payload;
+        case 'Load_Init':
+          return {
+            ...state,
+            isLoading:true, 
+            isError:false 
+          }
+        case 'Load_Success':
+          return {
+            ...state,
+            data:action.payload,
+            isLoading:false, 
+            isError:false 
+          }
+        case 'Load_Error':
+          return {
+            ...state,
+            isLoading:false, 
+            isError:true 
+          }
         case 'REMOVE_STORY':
-          const newState = state.filter( (item) => (item.objectID !== action.payload.objectID) );
-          return newState;
+          const newState = state.data.filter( (item) => (item.objectID !== action.payload.objectID) );
+          return {
+            data:newState,
+            isLoading:false, 
+            isError:false 
+          }
         default:
           throw new Error();
       }
@@ -48,11 +69,8 @@ function App() {
     //stories 列表，初始为空
     //const [stories, setStories] = React.useState([]);
     //不再使用useState管理stories，改用useReducer。第一个参数是派发处理函数，第二个参数是stories的初始值
-    const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
-    //加载完成标记，默认否
-    const [isLoading, setIsLoading] = React.useState(false);
-    //加载过程是否出错
-    const [isError, setIsError] = React.useState(false);
+    const [stories, dispatchStories] = React.useReducer(storiesReducer, {data:[],isLoading:false, isError:false });
+
     
     const getAsyncStories = () =>
       new Promise(resolve => setTimeout( ()=>resolve({ data: { stories: initialStories } }), 2000 )      
@@ -75,17 +93,18 @@ function App() {
     }, [searchTerm] )
 
     React.useEffect( ()=>{
-      setIsLoading(true);
+      //setIsLoading(true);
+      dispatchStories({type:'Load_Init'});
       getAsyncStories().then( (result)=>{
         //setStories(result.data.stories);
-        dispatchStories({type:'SET_STORIES', payload:result.data.stories});
-        setIsLoading(false);
+        dispatchStories({type:'Load_Success', payload:result.data.stories});
+        //setIsLoading(false);
       } ).catch(
-        (errInfo)=>setIsError(true)
+        (errInfo)=>dispatchStories({type:'Load_Error'}) //setIsError(true)
       )
     }, [] );
 
-    const searchedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
+    const searchedStories = stories.data.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
 return (
   <div>
@@ -93,8 +112,8 @@ return (
     <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
-    {isError && (<p>sorry, there is error!</p>)}
-    {isLoading?
+    {stories.isError && (<p>sorry, there is error!</p>)}
+    {stories.isLoading?
     (<p> loading...</p>)
     :(<List list={searchedStories} onRemoveItem={handleRemoveStory}/>)}
     
