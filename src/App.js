@@ -33,8 +33,22 @@ function App() {
     },
     ];
 
+    const storiesReducer = (state, action)=>{
+
+      switch (action.type) {
+        case 'SET_STORIES':
+          return action.payload;
+        case 'REMOVE_STORY':
+          const newState = state.filter( (item) => (item.objectID !== action.payload.objectID) );
+          return newState;
+        default:
+          throw new Error();
+      }
+    }
     //stories 列表，初始为空
-    const [stories, setStories] = React.useState([]);
+    //const [stories, setStories] = React.useState([]);
+    //不再使用useState管理stories，改用useReducer。第一个参数是派发处理函数，第二个参数是stories的初始值
+    const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
     //加载完成标记，默认否
     const [isLoading, setIsLoading] = React.useState(false);
     //加载过程是否出错
@@ -46,8 +60,9 @@ function App() {
 
 
     const handleRemoveStory = (item)=>{
-      const newStories = stories.filter( (story) =>story.objectID !== item.objectID );
-      setStories(newStories);
+      // const newStories = stories.filter( (story) =>story.objectID !== item.objectID );
+      // setStories(newStories);
+      dispatchStories({type:'REMOVE_STORY', payload:item});
     }
 
 
@@ -62,7 +77,8 @@ function App() {
     React.useEffect( ()=>{
       setIsLoading(true);
       getAsyncStories().then( (result)=>{
-        setStories(result.data.stories);
+        //setStories(result.data.stories);
+        dispatchStories({type:'SET_STORIES', payload:result.data.stories});
         setIsLoading(false);
       } ).catch(
         (errInfo)=>setIsError(true)
