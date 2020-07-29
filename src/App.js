@@ -59,11 +59,11 @@ const List = (props)=> props.list.map( (item)=>
 )
 )  
 
-const Search = props =>{
+const Search = ({searchWord, onSearch}) =>{
   return (<div>
   <label htmlFor="search">Search: </label>
-  <input id="search" type="text" value ={props.searchWord}  onChange = {props.onSearch} />
-  <p> your search word is: <strong>{props.searchWord}</strong> </p>
+  <input id="search" type="text" value ={searchWord}  onChange = {onSearch} />
+  <p> your search word is: <strong>{searchWord}</strong> </p>
   </div>)
 }
 
