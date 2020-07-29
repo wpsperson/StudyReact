@@ -31,7 +31,7 @@ function App() {
     },
     ];
 
-    const AppOnSearch = (event)=>{
+    const handleSearch = (event)=>{
       setSearchTerm(event.target.value);
     }
 
@@ -40,7 +40,7 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <Search onSearch={AppOnSearch} searchWord={searchTerm}/>
+    <InputWithLabel id='search' label = 'Search: ' value={searchTerm} onChange={handleSearch}/>
     <List list={filtedStories}/>
   </div>
 );
@@ -59,12 +59,15 @@ const List = (props)=> props.list.map( (item)=>
 )
 )  
 
-const Search = ({searchWord, onSearch}) =>{
-  return (<>
-  <label htmlFor="search">Search: </label>
-  <input id="search" type="text" value ={searchWord}  onChange = {onSearch} />
-  <p> your search word is: <strong>{searchWord}</strong> </p>
+
+const InputWithLabel = ({id, label, value,  onChange}) => {
+return  (
+  <>
+  <label htmlFor={id}>{label}</label>
+  <input id={id} type='text' value ={value}  onChange = {onChange} />
+  <p> your search word is: <strong>{value}</strong> </p>
   </>)
+
 }
 
 
