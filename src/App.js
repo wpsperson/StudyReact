@@ -55,7 +55,7 @@ return (
 );
 }
 
-const List = (props)=> props.list.map( 
+const List = ({list})=> list.map( 
   ({objectID, ...item})=> <Item key={objectID} {...item}/>
 )
 
