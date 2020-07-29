@@ -47,9 +47,11 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
+    <InputWithLabel id='search' value={searchTerm} isFocused={false} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
+    
+    <InputWithLabel id='search2' value={searchTerm} isFocused={true} onChange={handleSearch}>search2</InputWithLabel>
     <List list={filtedStories}/>
   </div>
 );
@@ -70,10 +72,18 @@ const List = (props)=> props.list.map( (item)=>
 
 
 const InputWithLabel = ({id, value, isFocused,  onChange, children}) => {
+
+  const inputRef = React.createRef();
+  React.useEffect( ()=>{
+    if(inputRef && isFocused){
+      inputRef.current.focus();
+    }
+  }, [isFocused] )
+
 return  (
   <>
   <label htmlFor={id}>{children}</label>
-  <input id={id} type='text' value ={value} autoFocus = {isFocused}  onChange = {onChange} />
+  <input id={id} type='text' value ={value}  onChange = {onChange} ref={inputRef} />
   <p> your search word is: <strong>{value}</strong> </p>
   </>)
 
