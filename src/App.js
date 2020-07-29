@@ -47,11 +47,9 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <InputWithLabel id='search' value={searchTerm} isFocused={false} onChange={handleSearch}>
+    <InputWithLabel id='search' value={searchTerm} isFocused={true} onChange={handleSearch}>
     <strong>Search:</strong>
     </InputWithLabel>
-    
-    <InputWithLabel id='search2' value={searchTerm} isFocused={true} onChange={handleSearch}>search2</InputWithLabel>
     <List list={filtedStories}/>
   </div>
 );
@@ -59,17 +57,19 @@ return (
 
 const List = (props)=> props.list.map( (item)=>
 ( 
-   <div key={item.objectID} >
-      <span>
-      <a href={item.url}>{item.title}</a>
-      </span>
-      <span>{item.author}</span>
-      <span>{item.num_comments}</span>
-      <span>{item.points}</span>
-    </div>
-)
-)  
+<Item key={item.objectID} item={item}/>
+)  )
 
+const Item = ({item})=>(
+  <div>
+  <span>
+  <a href={item.url}>{item.title}</a>
+  </span>
+  <span>{item.author}</span>
+  <span>{item.num_comments}</span>
+  <span>{item.points}</span>
+  </div>
+)
 
 const InputWithLabel = ({id, value, isFocused,  onChange, children}) => {
 
