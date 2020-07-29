@@ -10,7 +10,9 @@ const welcome = {greet:'Hay', word:'React'}
 
 function App() {
 
-  const [searchTerm, setSearchTerm] = React.useState('React');
+  const [searchTerm, setSearchTerm] = React.useState( 
+    localStorage.getItem('search') ||  'React'
+    );
 
   const stories = [
     {
@@ -33,6 +35,7 @@ function App() {
 
     const handleSearch = (event)=>{
       setSearchTerm(event.target.value);
+      localStorage.setItem('search', event.target.value);
     }
 
     const filtedStories = stories.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
