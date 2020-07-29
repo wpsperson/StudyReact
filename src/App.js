@@ -47,7 +47,9 @@ function App() {
 return (
   <div>
     <h3>{welcome.greet}, {welcome.word}</h3>
-    <InputWithLabel id='search' label = 'Search: ' value={searchTerm} onChange={handleSearch}/>
+    <InputWithLabel id='search' value={searchTerm} onChange={handleSearch}>
+    <strong>Search:</strong>
+    </InputWithLabel>
     <List list={filtedStories}/>
   </div>
 );
@@ -67,10 +69,10 @@ const List = (props)=> props.list.map( (item)=>
 )  
 
 
-const InputWithLabel = ({id, label, value,  onChange}) => {
+const InputWithLabel = ({id, value,  onChange, children}) => {
 return  (
   <>
-  <label htmlFor={id}>{label}</label>
+  <label htmlFor={id}>{children}</label>
   <input id={id} type='text' value ={value}  onChange = {onChange} />
   <p> your search word is: <strong>{value}</strong> </p>
   </>)
