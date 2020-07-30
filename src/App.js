@@ -1,7 +1,7 @@
 import React from 'react';
 
-//const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
-const API_ENDPOINT = 'https://api.github.com/users/';
+const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+//const API_ENDPOINT = 'https://api.github.com/users/';
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -59,51 +59,57 @@ const App = () => {
     { data: [], isLoading: false, isError: false }
   );
 
-  React.useEffect(() => {
-      if(!searchTerm)
-          return;
+    //采用 memoized function
+  const handleFetchStories = React.useCallback( ()=>{
+    if(!searchTerm)
+    return;
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     fetch(`${API_ENDPOINT}${searchTerm}`)
-      .then(response => {
-        if (!response.ok) {
-          dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
-          return null;
-        }else{
-          return response.json();
-        }
-      }     
-      )
-      .then(result => {
-          if(result === null) 
-            return;
-          //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
-          let id = result.id;
-          let name = result.login;
-          let html_url = result.html_url;
-          let story =     {
-            title: '<<The ' + name +' Tutorial>>',
-            url: html_url,
-            author: name,
-            num_comments: 2,
-            points: 5,
-            objectID: id,
-            };
-          let story2 =     {
-            title: '<<The ' + name +'2 Tutorial>>',
-            url: html_url,
-            author: name,
-            num_comments: 2,
-            points: 5,
-            objectID: id+1,
-            };
-        dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], });        
-      })
-      .catch(() =>
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-      );
-  }, [searchTerm]);
+    .then(response => {
+      if (!response.ok) {
+        dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
+        return null;
+      }else{
+        return response.json();
+      }
+    }     
+    )
+    .then(result => {
+        if(result === null) 
+          return;
+      dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
+      //   let id = result.id;
+      //   let name = result.login;
+      //   let html_url = result.html_url;
+      //   let story =     {
+      //     title: '<<The ' + name +' Tutorial>>',
+      //     url: html_url,
+      //     author: name,
+      //     num_comments: 2,
+      //     points: 5,
+      //     objectID: id,
+      //     };
+      //   let story2 =     {
+      //     title: '<<The ' + name +'2 Tutorial>>',
+      //     url: html_url,
+      //     author: name,
+      //     num_comments: 2,
+      //     points: 5,
+      //     objectID: id+1,
+      //     };
+      // dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], });        
+    })
+    .catch(() =>
+      dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+    );
+  }, [searchTerm] )
+
+  //采用 memoized function
+  React.useEffect(() => {
+    handleFetchStories();
+  }, [handleFetchStories]);
 
   const handleRemoveStory = item => {
     dispatchStories({
