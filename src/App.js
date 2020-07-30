@@ -60,11 +60,24 @@ const App = () => {
   );
 
   React.useEffect(() => {
+      if(!searchTerm)
+          return;
+
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(`${API_ENDPOINT}react`)
-      .then(response => response.json())
+    fetch(`${API_ENDPOINT}${searchTerm}`)
+      .then(response => {
+        if (!response.ok) {
+          dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
+          return null;
+        }else{
+          return response.json();
+        }
+      }     
+      )
       .then(result => {
+          if(result === null) 
+            return;
           //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
           let id = result.id;
           let name = result.login;
@@ -90,7 +103,7 @@ const App = () => {
       .catch(() =>
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
       );
-  }, []);
+  }, [searchTerm]);
 
   const handleRemoveStory = item => {
     dispatchStories({
