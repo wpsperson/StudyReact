@@ -71,6 +71,7 @@ function App() {
     //不再使用useState管理stories，改用useReducer。第一个参数是派发处理函数，第二个参数是stories的初始值
     const [stories, dispatchStories] = React.useReducer(storiesReducer, {data:[],isLoading:false, isError:false });
 
+    //const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
     const API_ENDPOINT = 'https://api.github.com/users/';
 
     const getAsyncStories = () =>
@@ -94,39 +95,51 @@ function App() {
     }, [searchTerm] )
 
     React.useEffect( ()=>{
-      //setIsLoading(true);
       dispatchStories({type:'Load_Init'});
-      getAsyncStories().then( (result)=>{
-        //setStories(result.data.stories);
-        dispatchStories({type:'Load_Success', payload:result.data.stories});
-        //setIsLoading(false);
-      } ).catch(
-        (errInfo)=>dispatchStories({type:'Load_Error'}) //setIsError(true)
+      fetch(`${API_ENDPOINT}React`)
+      .then(
+        (response)=>response.json()
       )
+      .then(
+        (result)=>{
+          //dispatchStories({type:'Load_Success', payload:result.hit})
+          let id = result.id;
+          let name = result.login;
+          let html_url = result.html_url;
+          let story =     {
+            title: '<<The ' + name +' Tutorial>>',
+            url: html_url,
+            author: name,
+            num_comments: 2,
+            points: 5,
+            objectID: id,
+            };
+          let story2 =     {
+            title: '<<The ' + name +'2 Tutorial>>',
+            url: html_url,
+            author: name,
+            num_comments: 2,
+            points: 5,
+            objectID: id+1,
+            };
+        dispatchStories({type:'Load_Success', payload:[story, story2]})
+        }
+      )
+      .catch(
+        ()=>dispatchStories({type:'Load_Error'})
+      );
+
+      // //setIsLoading(true);
+      // dispatchStories({type:'Load_Init'});
+      // getAsyncStories().then( (result)=>{
+      //   //setStories(result.data.stories);
+      //   dispatchStories({type:'Load_Success', payload:result.data.stories});
+      //   //setIsLoading(false);
+      // } ).catch(
+      //   (errInfo)=>dispatchStories({type:'Load_Error'}) //setIsError(true)
+      // )
     }, [] );
 
-    //pseudo
-    React.useEffect(() => {
-      fetch(`${API_ENDPOINT}React`) // B
-      .then(response => response.json()) // C
-      .then(result => {
-        let id = result.id;
-        let name = result.login;
-        let html_url = result.html_url;
-        let story =     {
-          title: '<<The ' + name +' Tutorial>>',
-          url: html_url,
-          author: name,
-          num_comments: 2,
-          points: 5,
-          objectID: id,
-          };
-        let str = JSON.stringify(story);
-        alert(str);
-      })
-      .catch(() => alert('fetch error!')
-      );
-      }, []);
 
     const searchedStories = stories.data.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
@@ -158,7 +171,7 @@ const Item = ({item, onRemoveItem})=>(
   <span>{item.num_comments}</span>
   <span>{item.points}</span>
   <span>
-    //onClick={onRemoveItem.bind(null, item)}
+    
     <button type="button" onClick={ ()=>onRemoveItem(item) }>
       Dismiss
     </button>
