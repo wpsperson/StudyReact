@@ -109,8 +109,9 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
   //提交按钮的handler
-  const handleSearchSubmit = () => {
+  const handleSearchSubmit = (event) => {
     setUrl(`${API_ENDPOINT}${searchTerm}`);
+    event.preventDefault();
   };
 
 
@@ -118,22 +119,11 @@ const App = () => {
   return (
     <div>
       <h3>My Hacker Stories</h3>
-
-      <InputWithLabel
-        id="search"
-        value={searchTerm}
-        isFocused
-        onInputChange={handleSearchInput}
-      >
-        <strong>Search:</strong>
-      </InputWithLabel>
-      <button
-        type="button"
-        disabled={!searchTerm}
-        onClick={handleSearchSubmit}
-        >
-        Submit
-      </button>
+      <SearchForm  
+          searchTerm={searchTerm} 
+          handleSearchInput={handleSearchInput} 
+          handleSearchSubmit={handleSearchSubmit} 
+      />
       <hr />
       {stories.isError && <p>Something went wrong ...</p>}
 
@@ -204,5 +194,24 @@ const Item = ({ item, onRemoveItem }) => (
     </span>
   </div>
 );
+
+const SearchForm = ({searchTerm, handleSearchInput, handleSearchSubmit }) => {
+  return (
+    <form  onSubmit={handleSearchSubmit}>
+    <InputWithLabel
+      id="search"
+      value={searchTerm}
+      isFocused
+      onInputChange={handleSearchInput}
+    >
+      <strong>Search:</strong>
+    </InputWithLabel>
+    <button  type="submit" disabled={!searchTerm}>
+      Submit
+    </button>
+    </form>
+  )
+}
+
 
 export default App;
