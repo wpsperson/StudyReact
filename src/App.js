@@ -71,7 +71,8 @@ function App() {
     //不再使用useState管理stories，改用useReducer。第一个参数是派发处理函数，第二个参数是stories的初始值
     const [stories, dispatchStories] = React.useReducer(storiesReducer, {data:[],isLoading:false, isError:false });
 
-    
+    const API_ENDPOINT = 'https://api.github.com/users/';
+
     const getAsyncStories = () =>
       new Promise(resolve => setTimeout( ()=>resolve({ data: { stories: initialStories } }), 2000 )      
     );
@@ -103,6 +104,29 @@ function App() {
         (errInfo)=>dispatchStories({type:'Load_Error'}) //setIsError(true)
       )
     }, [] );
+
+    //pseudo
+    React.useEffect(() => {
+      fetch(`${API_ENDPOINT}React`) // B
+      .then(response => response.json()) // C
+      .then(result => {
+        let id = result.id;
+        let name = result.login;
+        let html_url = result.html_url;
+        let story =     {
+          title: '<<The ' + name +' Tutorial>>',
+          url: html_url,
+          author: name,
+          num_comments: 2,
+          points: 5,
+          objectID: id,
+          };
+        let str = JSON.stringify(story);
+        alert(str);
+      })
+      .catch(() => alert('fetch error!')
+      );
+      }, []);
 
     const searchedStories = stories.data.filter( (item)=> item.title.toLowerCase().includes(searchTerm.toLowerCase()) );
 
