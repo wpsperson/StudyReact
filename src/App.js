@@ -1,7 +1,7 @@
 import React from 'react';
 
-const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
-//const API_ENDPOINT = 'https://api.github.com/users/';
+//const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+const API_ENDPOINT = 'https://api.github.com/users/';
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -32,7 +32,7 @@ const storiesReducer = (state, action) => {
       };
     case 'STORIES_FETCH_FAILURE':
       return {
-        ...state,
+        data:[],
         isLoading: false,
         isError: true,
       };
@@ -53,6 +53,7 @@ const App = () => {
     'search',
     'React'
   );
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
   const [stories, dispatchStories] = React.useReducer(
     storiesReducer,
@@ -61,12 +62,10 @@ const App = () => {
 
     //采用 memoized function
   const handleFetchStories = React.useCallback( ()=>{
-    if(!searchTerm)
-    return;
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
     .then(response => {
       if (!response.ok) {
         dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
@@ -79,32 +78,32 @@ const App = () => {
     .then(result => {
         if(result === null) 
           return;
-      dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
-      //   let id = result.id;
-      //   let name = result.login;
-      //   let html_url = result.html_url;
-      //   let story =     {
-      //     title: '<<The ' + name +' Tutorial>>',
-      //     url: html_url,
-      //     author: name,
-      //     num_comments: 2,
-      //     points: 5,
-      //     objectID: id,
-      //     };
-      //   let story2 =     {
-      //     title: '<<The ' + name +'2 Tutorial>>',
-      //     url: html_url,
-      //     author: name,
-      //     num_comments: 2,
-      //     points: 5,
-      //     objectID: id+1,
-      //     };
-      // dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], });        
+      //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
+        let id = result.id;
+        let name = result.login;
+        let html_url = result.html_url;
+        let story =     {
+          title: '<<The ' + name +' Tutorial>>',
+          url: html_url,
+          author: name,
+          num_comments: 2,
+          points: 5,
+          objectID: id,
+          };
+        let story2 =     {
+          title: '<<The ' + name +'2 Tutorial>>',
+          url: html_url,
+          author: name,
+          num_comments: 2,
+          points: 5,
+          objectID: id+1,
+          };
+      dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], });        
     })
     .catch(() =>
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
     );
-  }, [searchTerm] )
+  }, [url] )
 
   //采用 memoized function
   React.useEffect(() => {
@@ -117,14 +116,16 @@ const App = () => {
       payload: item,
     });
   };
-
-  const handleSearch = event => {
+  //输入的handler
+  const handleSearchInput = event => {
     setSearchTerm(event.target.value);
   };
+  //提交按钮的handler
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
 
-  const searchedStories = stories.data.filter(story =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+
 
   return (
     <div>
@@ -134,20 +135,25 @@ const App = () => {
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
-
+      <button
+        type="button"
+        disabled={!searchTerm}
+        onClick={handleSearchSubmit}
+        >
+        Submit
+      </button>
       <hr />
-
       {stories.isError && <p>Something went wrong ...</p>}
 
       {stories.isLoading ? (
         <p>Loading ...</p>
       ) : (
         <List
-          list={searchedStories}
+          list={stories.data}
           onRemoveItem={handleRemoveStory}
         />
       )}
