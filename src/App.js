@@ -62,13 +62,12 @@ const App = () => {
   );
 
     //采用 memoized function
-  const handleFetchStories = React.useCallback( ()=>{
-
+  const handleFetchStories = React.useCallback( async ()=>{
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-    //用axios 和 用 fetch 不同，如果404会进入catch中，不用再then中判断了。
-    axios.get(url)
-    .then(result => {
-      //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.data.hits, });
+    try {
+          //用axios 和 用 fetch 不同，如果404会进入catch中，不用再then中判断了。
+        let result = await axios.get(url);
+        //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.data.hits, });
         let id = result.data.id;
         let name = result.data.login;
         let html_url = result.data.html_url;
@@ -88,11 +87,10 @@ const App = () => {
           points: 5,
           objectID: id+1,
           };
-      dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], });        
-    })
-    .catch(() =>
-      dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
-    );
+        dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: [story, story2], }); 
+    } catch (error) {
+        dispatchStories({ type: 'STORIES_FETCH_FAILURE' })
+    }
   }, [url] )
 
   //采用 memoized function
