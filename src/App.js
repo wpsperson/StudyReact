@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios'
 
 //const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 const API_ENDPOINT = 'https://api.github.com/users/';
@@ -64,24 +65,13 @@ const App = () => {
   const handleFetchStories = React.useCallback( ()=>{
 
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
-
-    fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
-        return null;
-      }else{
-        return response.json();
-      }
-    }     
-    )
+    //用axios 和 用 fetch 不同，如果404会进入catch中，不用再then中判断了。
+    axios.get(url)
     .then(result => {
-        if(result === null) 
-          return;
-      //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.hits, });
-        let id = result.id;
-        let name = result.login;
-        let html_url = result.html_url;
+      //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.data.hits, });
+        let id = result.data.id;
+        let name = result.data.login;
+        let html_url = result.data.html_url;
         let story =     {
           title: '<<The ' + name +' Tutorial>>',
           url: html_url,
