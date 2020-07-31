@@ -1,5 +1,6 @@
 import React from 'react';
-import axios from 'axios'
+import axios from 'axios';
+import './App.css';
 
 //const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 const API_ENDPOINT = 'https://api.github.com/users/';
@@ -117,8 +118,8 @@ const App = () => {
 
 
   return (
-    <div>
-      <h3>My Hacker Stories</h3>
+    <div className='container'>
+      <h3 className='headline-primary'>My Hacker Stories</h3>
       <SearchForm  
           searchTerm={searchTerm} 
           handleSearchInput={handleSearchInput} 
