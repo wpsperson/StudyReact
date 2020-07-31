@@ -158,7 +158,7 @@ const InputWithLabel = ({
 
   return (
     <>
-      <label htmlFor={id}>{children}</label>
+      <label htmlFor={id}  className="label" >{children}</label>
       &nbsp;
       <input
         ref={inputRef}
@@ -166,6 +166,7 @@ const InputWithLabel = ({
         type={type}
         value={value}
         onChange={onInputChange}
+        className="input"
       />
     </>
   );
@@ -198,7 +199,7 @@ const Item = ({ item, onRemoveItem }) => (
 
 const SearchForm = ({searchTerm, handleSearchInput, handleSearchSubmit }) => {
   return (
-    <form  onSubmit={handleSearchSubmit}>
+    <form  onSubmit={handleSearchSubmit} className="search-form">
     <InputWithLabel
       id="search"
       value={searchTerm}
@@ -207,7 +208,7 @@ const SearchForm = ({searchTerm, handleSearchInput, handleSearchSubmit }) => {
     >
       <strong>Search:</strong>
     </InputWithLabel>
-    <button  type="submit" disabled={!searchTerm}>
+    <button  type="submit" disabled={!searchTerm} className="button button_large">
       Submit
     </button>
     </form>
