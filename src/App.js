@@ -209,10 +209,17 @@ const InputWithLabel = ({
 const List = ({ list, onRemoveItem }) => {
 
   const [sortState, setSortState] = React.useState('title');
+  const [needReverse, setNeedReverse] = React.useState(false);
   const onClickHeader = (key)=>{
-      setSortState(key);
+    if(key === sortState){
+      setNeedReverse( !needReverse );
+    }
+    setSortState(key);
   }
   const sortedList = sortBy(list, sortState);
+  if(needReverse){
+    sortedList.reverse();
+  }
 
   return <>
   <div className='item'>
