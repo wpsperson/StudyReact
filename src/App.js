@@ -57,8 +57,8 @@ const App = () => {
     'React'
   );
 
-  const [url, setUrl] = React.useState(
-    `${API_ENDPOINT}${searchTerm}`
+  const [urls, setUrls] = React.useState(
+    [`${API_ENDPOINT}${searchTerm}`]
   );
 
   const [stories, dispatchStories] = React.useReducer(
@@ -71,6 +71,7 @@ const App = () => {
 
     try {
       //用axios 和 用 fetch 不同，如果404会进入catch中，不用再then中判断了。
+      let url = urls[urls.length - 1];
       let result = await axios.get(url);
       //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.data.hits, });
       let id = result.data.id;
@@ -108,7 +109,7 @@ const App = () => {
     } catch {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
     }
-  }, [url]);
+  }, [urls]);
 
   React.useEffect(() => {
     handleFetchStories();
@@ -126,8 +127,8 @@ const App = () => {
   };
 
   const handleSearchSubmit = event => {
-    setUrl(`${API_ENDPOINT}${searchTerm}`);
-
+    let url = `${API_ENDPOINT}${searchTerm}`;
+    setUrls(urls.concat(url));
     event.preventDefault();
   };
 
