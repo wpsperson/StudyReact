@@ -54,7 +54,7 @@ const storiesReducer = (state, action) => {
 const extractSearchTerm = url=>url.replace(API_ENDPOINT, '');
 const getUrl = searchTerm => `${API_ENDPOINT}${searchTerm}`;
 
-const getLastSearches = urls => urls.slice(-5).map(url=>extractSearchTerm(url));
+const getLastSearches = urls => urls.slice(-6).slice(0, -1).map(url=>extractSearchTerm(url));
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState(
