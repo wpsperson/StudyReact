@@ -82,12 +82,12 @@ const App = () => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleRemoveStory = React.useCallback(item => {
+  const handleRemoveStory = item => {
     dispatchStories({
       type: 'REMOVE_STORY',
       payload: item,
     });
-  }, []) ;
+  };
 
   const handleSearchInput = event => {
     setSearchTerm(event.target.value);
@@ -98,7 +98,7 @@ const App = () => {
 
     event.preventDefault();
   };
-  console.log('B:App')
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -154,7 +154,7 @@ const InputWithLabel = ({
   const inputRef = React.useRef();
 
   React.useEffect(() => {
-    if (isFocused) {
+    if (isFocused && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isFocused]);
@@ -174,15 +174,14 @@ const InputWithLabel = ({
   );
 };
 
-const List = React.memo( ({ list, onRemoveItem }) => console.log('B:List') ||
+const List = ({ list, onRemoveItem }) =>
   list.map(item => (
     <Item
       key={item.objectID}
       item={item}
       onRemoveItem={onRemoveItem}
     />
-  ))
-);
+  ));
 
 const Item = ({ item, onRemoveItem }) => (
   <div>
@@ -201,3 +200,4 @@ const Item = ({ item, onRemoveItem }) => (
 );
 
 export default App;
+export { SearchForm, InputWithLabel, List, Item };
