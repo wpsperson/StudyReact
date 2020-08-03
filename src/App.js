@@ -51,6 +51,8 @@ const storiesReducer = (state, action) => {
   }
 };
 
+const getLastSearches = urls => urls.slice(-5);
+
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState(
     'search',
@@ -132,6 +134,12 @@ const App = () => {
     event.preventDefault();
   };
 
+  console.log(JSON.stringify(urls));
+  const lastSearches = getLastSearches(urls);
+  console.log(JSON.stringify(lastSearches));
+  const handleLastSearch = url => {
+
+  }
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -141,6 +149,15 @@ const App = () => {
         onSearchInput={handleSearchInput}
         onSearchSubmit={handleSearchSubmit}
       />
+      {
+        lastSearches.map( (url)=>(
+          <button key={url}
+          onClick = {()=>handleLastSearch(url)}
+          >
+            {url}
+          </button>
+        ) )
+      }
 
       <hr />
 
