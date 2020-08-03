@@ -52,6 +52,7 @@ const storiesReducer = (state, action) => {
 };
 
 const extractSearchTerm = url=>url.replace(API_ENDPOINT, '');
+const getUrl = searchTerm => `${API_ENDPOINT}${searchTerm}`;
 
 const getLastSearches = urls => urls.slice(-5).map(url=>extractSearchTerm(url));
 
@@ -62,7 +63,7 @@ const App = () => {
   );
 
   const [urls, setUrls] = React.useState(
-    [`${API_ENDPOINT}${searchTerm}`]
+    [getUrl(searchTerm)]
   );
 
   const [stories, dispatchStories] = React.useReducer(
@@ -131,15 +132,19 @@ const App = () => {
   };
 
   const handleSearchSubmit = event => {
-    let url = `${API_ENDPOINT}${searchTerm}`;
-    setUrls(urls.concat(url));
+    handleSearch(searchTerm);
     event.preventDefault();
   };
 
   const lastSearches = getLastSearches(urls);
-  const handleLastSearch = url => {
+  const handleLastSearch = searchTerm => {
+    handleSearch(searchTerm);
+  };
+  const handleSearch = searchTerm => {
+    const url = getUrl(searchTerm);
+    setUrls(urls.concat(url));
+    };
 
-  }
   return (
     <div>
       <h1>My Hacker Stories</h1>
@@ -150,8 +155,8 @@ const App = () => {
         onSearchSubmit={handleSearchSubmit}
       />
       {
-        lastSearches.map( (searchTerm)=>(
-          <button key={searchTerm}
+        lastSearches.map( (searchTerm, index)=>(
+          <button key={searchTerm+index}
           onClick = {()=>handleLastSearch(searchTerm)}
           >
             {searchTerm}
