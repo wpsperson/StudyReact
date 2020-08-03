@@ -1,7 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+import './App.css';
+import { sortBy } from 'lodash';
 
-const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+//const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
+const API_ENDPOINT = 'https://api.github.com/users/';
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -67,11 +70,40 @@ const App = () => {
     dispatchStories({ type: 'STORIES_FETCH_INIT' });
 
     try {
-      const result = await axios.get(url);
-
+      //用axios 和 用 fetch 不同，如果404会进入catch中，不用再then中判断了。
+      let result = await axios.get(url);
+      //dispatchStories({ type: 'STORIES_FETCH_SUCCESS',  payload: result.data.hits, });
+      let id = result.data.id;
+      let name = result.data.login;
+      let html_url = result.data.html_url;
+      let story =     {
+        title: 'first ' + name +' Tutorial',
+        url: html_url,
+        author: "wangwu",
+        num_comments: 5,
+        points: 5,
+        objectID: id,
+        };
+      let story2 =     {
+        title: 'second ' + name +'2 Tutorial',
+        url: html_url,
+        author: "lisi",
+        num_comments: 3,
+        points: 8,
+        objectID: id+1,
+        };
+      let story3 =     {
+        title: 'third ' + name +'3 Tutorial',
+        url: html_url,
+        author: 'zhangsan',
+        num_comments: 9,
+        points: 4,
+        objectID: id+2,
+        };
+           
       dispatchStories({
         type: 'STORIES_FETCH_SUCCESS',
-        payload: result.data.hits,
+        payload: [story, story2, story3],
       });
     } catch {
       dispatchStories({ type: 'STORIES_FETCH_FAILURE' });
@@ -174,24 +206,42 @@ const InputWithLabel = ({
   );
 };
 
-const List = ({ list, onRemoveItem }) =>
-  list.map(item => (
-    <Item
-      key={item.objectID}
-      item={item}
-      onRemoveItem={onRemoveItem}
-    />
-  ));
+const List = ({ list, onRemoveItem }) => {
+
+  const [sortState, setSortState] = React.useState('title');
+  const onClickHeader = (key)=>{
+      setSortState(key);
+  }
+  const sortedList = sortBy(list, sortState);
+
+  return <>
+  <div className='item'>
+    <button style={{ width: '40%' }}  onClick={()=>onClickHeader('title')} >title</button>
+    <button style={{ width: '30%' }}  onClick={()=>onClickHeader('author')} >author</button>
+    <button style={{ width: '10%' }}  onClick={()=>onClickHeader('num_comments')} >num_comments</button>
+    <button style={{ width: '10%' }}  onClick={()=>onClickHeader('points')} >points</button>
+  </div>
+    {
+      sortedList.map(item => (
+        <Item
+          key={item.objectID}
+          item={item}
+          onRemoveItem={onRemoveItem}
+        />
+      ))
+    }
+  </>
+}
 
 const Item = ({ item, onRemoveItem }) => (
-  <div>
-    <span>
+  <div className='item'>
+    <span style={{ width: '40%' }}>
       <a href={item.url}>{item.title}</a>
     </span>
-    <span>{item.author}</span>
-    <span>{item.num_comments}</span>
-    <span>{item.points}</span>
-    <span>
+    <span style={{ width: '30%' }}>{item.author}</span>
+    <span style={{ width: '10%' }}>{item.num_comments}</span>
+    <span style={{ width: '10%' }}>{item.points}</span>
+    <span style={{ width: '10%' }}>
       <button type="button" onClick={() => onRemoveItem(item)}>
         Dismiss
       </button>
